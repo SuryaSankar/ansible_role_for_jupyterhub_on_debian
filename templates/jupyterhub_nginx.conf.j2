@@ -1,0 +1,29 @@
+server {
+    listen 80 default_server;
+    listen 443 ssl default_server;
+    ssl_certificate /etc/ssl/site-certs/{{jupyterhub_fqdn}}.crt;
+    ssl_certificate_key /etc/ssl/site-certs/{{jupyterhub_fqdn}}.key;
+    server_name {{jupyterhub_fqdn}};
+
+    location / {
+            proxy_pass            https://127.0.0.1:8000;
+            proxy_set_header      Host $host;
+    }
+
+    location ~ /api/kernels/ {
+            proxy_pass            https://127.0.0.1:8000;
+            proxy_set_header      Host $host;
+            proxy_http_version    1.1;
+            proxy_set_header      Upgrade "websocket";
+            proxy_set_header      Connection "Upgrade";
+            proxy_read_timeout    300;
+    }
+    location ~ /terminals/ {
+            proxy_pass            https://127.0.0.1:8000;
+            proxy_set_header      Host $host;
+            proxy_http_version    1.1;
+            proxy_set_header      Upgrade "websocket";
+            proxy_set_header      Connection "Upgrade";
+            proxy_read_timeout    300;
+    }
+}

@@ -1,0 +1,15 @@
+---
+- name: Creates /etc/ssl/site-certs
+  file:
+    path: /etc/ssl/site-certs
+    state: directory
+
+- name: Copy ssl cert
+  copy:
+    src: "{{ jupyterhub_ssl_cert_path }}"
+    dest: /etc/ssl/site-certs/{{ jupyterhub_fqdn }}.crt
+
+- name: Copy ssl private key
+  copy:
+    src: "{{ jupyterhub_ssl_key_path }}"
+    dest: /etc/ssl/site-certs/{{ jupyterhub_fqdn }}.key

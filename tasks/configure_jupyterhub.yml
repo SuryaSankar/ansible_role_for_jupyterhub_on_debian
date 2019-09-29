@@ -1,0 +1,43 @@
+---
+- name: Install jupyterlab-git
+  command: jupyter labextension install @jupyterlab/git
+
+- name: Enable jupyterlab_git
+  command: jupyter serverextension enable --py --system jupyterlab_git
+
+- name: Install hub-extension
+  command: jupyter labextension install @jupyterlab/hub-extension
+
+- name: Create jupyterhub directory in etc
+  file:
+    path: /etc/jupyterhub
+    state: directory
+    owner: root
+
+- name: Copy jupyterhub config
+  template:
+    src: templates/jupyterhub_config.py.j2
+    dest: /etc/jupyterhub/jupyterhub_config.py
+    mode: 0755
+    owner: root
+
+- name: Copy jupyterhub service file
+  template:
+    src: templates/jupyterhub.service.j2
+    dest: /lib/systemd/system/jupyterhub.service
+
+- name: Link jupyterhub.service
+  file:
+    state: link
+    src: /lib/systemd/system/jupyterhub.service
+    dest: /etc/systemd/system/jupyterhub.service
+
+- name: Reload systemd
+  systemd:
+    daemon_reload: yes
+
+- name: enable and restart jupyterhub.service
+  systemd:
+    name: jupyterhub.service
+    state: restarted
+    enabled: yes

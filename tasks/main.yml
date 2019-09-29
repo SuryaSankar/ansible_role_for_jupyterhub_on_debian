@@ -1,0 +1,21 @@
+---
+- name: run apt upgrade
+  apt: update_cache=yes
+
+- name: Install dependencies
+  include: install_dependencies.yml
+
+- name: Configuring ssl certificates
+  include: configure_ssl.yml
+
+- name: Create workspace
+  file:
+    path: /home/{{ansible_ssh_user}}/workspace
+    state: directory
+    owner: "{{ansible_ssh_user}}"
+
+- name: Configure Jupyterhub
+  include: configure_jupyterhub.yml
+
+- name: Configure Nginx
+  include: configure_nginx.yml

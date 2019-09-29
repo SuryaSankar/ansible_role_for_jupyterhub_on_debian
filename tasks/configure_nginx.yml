@@ -1,0 +1,20 @@
+---
+- name: Install nginx
+  apt: name=nginx
+
+- name: Copy nginx conf
+  template:
+    src: templates/jupyterhub_nginx.conf.j2
+    dest: /etc/nginx/sites-available/jupyterhub.conf
+    mode: 0755
+
+- name: Enable default site
+  file:
+    state: link
+    src: /etc/nginx/sites-available/jupyterhub.conf
+    dest: /etc/nginx/sites-enabled/jupyterhub.conf
+
+- name: restart nginx
+  service:
+    name: nginx
+    state: restarted
